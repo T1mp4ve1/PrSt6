@@ -1,0 +1,44 @@
+[
+  {
+    "name": "Nokia 3310",
+    "description": "Indestructible cellphone",
+    "brand": "Nokia",
+    "imageUrl": "https://media-assets.wired.it/photos/615f1aaedf06cb23e01cec11/1:1/w_732,h_732,c_limit/1487069767_Nokia-3310.jpg",
+    "price": 99
+  },
+  {
+    "name": "Sneakers Runner",
+    "description": "Scarpe sportive leggere e resistenti, ideali per la corsa quotidiana.",
+    "brand": "Nike",
+    "imageUrl": "https://images.prodirectsport.com/ProductImages/Main/1012552_Main_1751150.jpg",
+    "price": 89
+  },
+  {
+    "name": "Smartphone Galaxy X",
+    "description": "Display AMOLED da 6.5 pollici, 128GB di memoria, doppia fotocamera.",
+    "brand": "Samsung",
+    "imageUrl": "https://media.ldlc.com/r1600/ld/products/00/06/17/40/LD0006174094.jpg",
+    "price": 599
+  },
+  {
+    "name": "Laptop Pro 15”",
+    "description": "Notebook professionale con processore i7, 16GB RAM, SSD 512GB.",
+    "brand": "Dell",
+    "imageUrl": "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
+    "price": 1299
+  },
+  {
+    "name": "Cuffie Wireless",
+    "description": "Auricolari Bluetooth con cancellazione del rumore e autonomia di 30 ore.",
+    "brand": "Sony",
+    "imageUrl": "https://images.unsplash.com/photo-1583225151286-2c50f3c2bc9b",
+    "price": 149
+  },
+  {
+    "name": "Zaino da viaggio",
+    "description": "Capiente e resistente all’acqua, perfetto per gite o uso quotidiano.",
+    "brand": "North Face",
+    "imageUrl": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+    "price": 79
+  }
+]

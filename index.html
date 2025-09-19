@@ -1,12 +1,88 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="it">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Progetto Settimanale - 5</title>
+    <title>Zio Affari Shop</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+
+    <style>
+        body {
+            background-image: url("https://www.nbbeventi.com/mediacontrib/2014/05/Offerta-imperdibile-verde-Offerta-imperdibile.jpg");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+    </style>
 </head>
+
 <body>
-    
-    <script src="index-js.js"></script>
+    <div class="container my-4">
+        <div class="card mb-3 ps-2 d-flex justify-content-between align-items-center">
+            <div>
+                <h1>Zio Affari</h1>
+                <p>Fai affari con lo Zio Ferrari!</p>
+            </div>
+            <h2 class="text-danger">OFFERTE CHE CAMBIANO STILE DI VITA!!!</h2>
+        </div>
+        <div id="alert-container"></div>
+        <div class="row" id="product-list"></div>
+    </div>
+
+    <script>
+        const baseURL = "https://striveschool-api.herokuapp.com/api/product/";
+        const key = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGNkMGU2NTZmMzAyMjAwMTUxMDgwY2QiLCJpYXQiOjE3NTgyNjkwMjksImV4cCI6MTc1OTQ3ODYyOX0.heSqHpY9vfaJL_v1tBNf9ra7RGKoiPlI3IZRe_hE5Zo";
+
+        // autorization func
+        function getHeaders() {
+            return { "Authorization": key };
+        }
+
+        function showAlert(msg, type = "info") {
+            document.getElementById("alert-container").innerHTML =
+                `<div class="alert alert-${type}" role="alert">${msg}</div>`;
+        }
+
+        //renderizza il contenuto di "product"
+        function renderProducts(array) {
+            const product_list = document.getElementById("product-list");
+            product_list.innerHTML = "";
+            if (array.length <= 0) {
+                product_list.innerHTML = "<div class='alert alert-info'>Nessun prodotto disponibile</div>";
+                return;
+            }
+            array.forEach(p => {
+                product_list.innerHTML += `
+        <div class="col-md-4 mb-3">
+          <div class="card h-100">
+            <img src="${p.imageUrl}" class="card-img-top" alt="IMMAGINE" style="object-fit:cover; height:200px;">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">${p.name}</h5>
+              <p class="card-text">${p.description}</p>
+              <div class="mt-auto d-flex gap-2">
+                <a href="detail.html?id=${p._id}" class="btn btn-sm btn-outline-primary">Scopri di più</a>
+                <a href="backoffice.html?id=${p._id}" class="btn btn-sm btn-secondary">Modifica</a>
+              </div>
+            </div>
+          </div>
+        </div>`;
+            });
+        }
+
+        //aggiunge
+        async function loadProducts() {
+            try {
+                const res = await fetch(baseURL, { headers: getHeaders() });
+                if (!res.ok) throw new Error("Errore " + res.status);
+                const products = await res.json(); //prende il result e lo converte in oggetto JS
+                renderProducts(products); //chiama la funzione per aggiungere il contenuto del products
+            } catch (err) {
+                showAlert("Errore nel caricamento: " + err.message, "danger");
+            }
+        }
+        loadProducts();
+    </script>
 </body>
+
 </html>

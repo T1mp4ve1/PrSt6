@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="it">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Backoffice</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container my-4">
+        <h2 id="title"></h2>
+        <div id="alert-container"></div>
+        <form id="product-form">
+            <div class="mb-3">
+                <label class="form-label">Nome *</label>
+                <input class="form-control" id="name">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Descrizione *</label>
+                <textarea class="form-control" id="description"></textarea>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Brand</label>
+                <input class="form-control" id="brand">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Prezzo *</label>
+                <input class="form-control" id="price">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Image URL</label>
+                <input class="form-control" id="imageUrl">
+            </div>
+            <div class="mb-2">
+                <button class="btn btn-primary" id="save-btn"></button>
+                <button type="button" class="btn btn-outline-secondary" onclick="resetForm()">Reset</button>
+                <button type="button" class="btn btn-danger d-none" id="delete-btn"
+                    onclick="deleteProduct()">Elimina</button>
+            </div>
+            <button type="button" class="btn btn-secondary" onclick="goBack()">Torna indietro</button>
+        </form>
+    </div>
+
+    <script>
+        const baseURL = "https://striveschool-api.herokuapp.com/api/product/";
+        const key = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2OGNkMGU2NTZmMzAyMjAwMTUxMDgwY2QiLCJpYXQiOjE3NTgyNjkwMjksImV4cCI6MTc1OTQ3ODYyOX0.heSqHpY9vfaJL_v1tBNf9ra7RGKoiPlI3IZRe_hE5Zo";
+        const params = new URLSearchParams(window.location.search); //prende tutto dopo '?'
+        const id = params.get("id"); //controlla se c'e' id dopo '?'
+
+        // key func
+        function getHeaders() { return { "Authorization": key, "Content-Type": "application/json" }; }
+
+        // alert func
+        function showAlert(msg, type = "info") {
+            document.getElementById("alert-container").innerHTML =
+                `<div class="alert alert-${type}" role="alert">${msg}</div>`;
+        }
+
+        // btn torna indietro
+        function goBack() {
+            window.history.back();
+        }
+
+        // add product
+        async function addProduct(e) {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById("name").value,
+                description: document.getElementById("description").value,
+                brand: document.getElementById("brand").value,
+                price: Number(document.getElementById("price").value),
+                imageUrl: document.getElementById("imageUrl").value
+            };
+
+            // controllo campi
+            if (!payload.name || !payload.description || !payload.price || isNaN(payload.price)) {
+                showAlert("Compila tutti i campi obbligatori!", "danger");
+                return;
+            }
+
+            const method = id ? "PUT" : "POST"; //se id c'e' fare PUT, altrimenti fare POST
+            const url = id ? baseURL + id : baseURL; //se id c'e' mette baseURL + id, altrimenti mette baseURL
+            try {
+                const res = await fetch(url, { method, headers: getHeaders(), body: JSON.stringify(payload) }); //converte JS in str JSON
+                if (!res.ok) throw new Error("Errore " + res.status);
+                showAlert(id ? "Prodotto aggiornato!" : "Prodotto creato!", "success"); //manda il messaggio in base dell'id
+                if (!id) document.getElementById("product-form").reset();
+            } catch (err) { showAlert("Errore: " + err.message, "danger"); }
+        }
+
+        // reset form
+        function resetForm() { if (confirm("Vuoi resettare i campi?")) document.getElementById("product-form").reset(); } //la funzione la chiamo nel file HTML
+
+        // modify product
+        async function modProduct() {
+            if (!id) return; //se non esiste id, allora ciao ciao
+            document.getElementById("delete-btn").classList.remove("d-none");
+            try {
+                const res = await fetch(baseURL + id, { headers: getHeaders() });
+                if (!res.ok) throw new Error("Errore " + res.status);
+                const p = await res.json(); //converte JSON in un oggetto JS
+                document.getElementById("name").value = p.name;
+                document.getElementById("description").value = p.description;
+                document.getElementById("brand").value = p.brand;
+                document.getElementById("price").value = p.price;
+                document.getElementById("imageUrl").value = p.imageUrl;
+            } catch (err) { showAlert("Errore caricamento: " + err.message, "danger"); }
+        }
+
+        async function deleteProduct() {
+            if (!confirm("Sei sicuro di eliminare questo prodotto?")) return; //se clicchi OK, funzione procede a cancellare
+            try {
+                const res = await fetch(baseURL + id, { method: "DELETE", headers: getHeaders() });
+                if (!res.ok) throw new Error("Errore " + res.status);
+                showAlert("Prodotto eliminato", "success");
+                setTimeout(() => window.location.href = "index.html", 1000); //fa tornare sulla pagina index dopo 1s
+            } catch (err) { showAlert("Errore eliminazione: " + err.message, "danger"); }
+        }
+
+        document.getElementById("title").innerText = id ? "Modifica Prodotto" : "Aggiungi Prodotto";
+        document.getElementById("save-btn").innerText = id ? "Salva" : "Aggiungi";
+        document.getElementById("product-form").addEventListener("submit", addProduct);
+
+        if (id) modProduct();
+    </script>
+</body>
+
+</html>
