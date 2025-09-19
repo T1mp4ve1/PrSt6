@@ -127,7 +127,7 @@
         }
 
         async function deleteProduct() {
-            if (!confirm("Sei sicuro di eliminare questo prodotto?")) return; //se clicchi OK, funzione procede a cancellare
+            if (!confirm("Sei sicuro di eliminare questo prodotto?")) return; //se clicchi OK, la funzione procede a cancellare
             try {
                 const res = await fetch(baseURL + id, { method: "DELETE", headers: getHeaders() });
                 if (!res.ok) throw new Error("Errore " + res.status);
